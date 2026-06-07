@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Me Blue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --blue-idle: #1a1a2e;
+      --blue-active: #2563eb;
+      --blue-glow: #3b82f6;
+      --text: #e8e8e8;
+      --muted: #555;
+      --border: #2a2a2a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      padding: 40px 20px;
+      overflow: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 10vw, 6rem);
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border: 1px solid var(--border);
+      background: var(--blue-idle);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition:
+        background 0.35s cubic-bezier(.4,0,.2,1),
+        border-color 0.35s ease,
+        color 0.35s ease,
+        box-shadow 0.35s ease,
+        transform 0.15s ease;
+      outline: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(59,130,246,0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .btn .number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      line-height: 1;
+      transition: color 0.35s ease;
+      color: #333;
+    }
+
+    .btn:hover {
+      border-color: #2563eb55;
+      transform: translateY(-2px);
+    }
+
+    .btn.active {
+      background: var(--blue-active);
+      border-color: var(--blue-glow);
+      color: #fff;
+      box-shadow:
+        0 0 0 1px var(--blue-glow),
+        0 0 30px rgba(59,130,246,0.4),
+        0 0 60px rgba(37,99,235,0.2);
+    }
+
+    .btn.active::after {
+      opacity: 1;
+    }
+
+    .btn.active .number {
+      color: #fff;
+    }
+
+    .btn.active .label {
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transform: scale(0);
+      animation: ripple-out 0.5s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-out {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    .status {
+      position: relative;
+      z-index: 1;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      min-height: 1.2em;
+      transition: color 0.3s ease;
+    }
+
+    .status.lit {
+      color: var(--blue-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Click Me Blue</h1>
+    <p>Toggle each button to activate</p>
+  </header>
+
+  <div class="button-row">
+    <button class="btn" onclick="toggle(this, 1)">
+      <span class="number">01</span>
+      <span class="label">Alpha</span>
+    </button>
+    <button class="btn" onclick="toggle(this, 2)">
+      <span class="number">02</span>
+      <span class="label">Beta</span>
+    </button>
+    <button class="btn" onclick="toggle(this, 3)">
+      <span class="number">03</span>
+      <span class="label">Gamma</span>
+    </button>
+  </div>
+
+  <div class="status" id="status">— none active —</div>
+
+  <script>
+    function toggle(btn, num) {
+      // Ripple effect
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      const size = Math.max(btn.offsetWidth, btn.offsetHeight);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = '50%';
+      ripple.style.top = '50%';
+      ripple.style.marginLeft = ripple.style.marginTop = -(size / 2) + 'px';
+      btn.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+
+      btn.classList.toggle('active');
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const active = [...document.querySelectorAll('.btn.active')]
+        .map(b => b.querySelector('.label').textContent);
+      const status = document.getElementById('status');
+      if (active.length === 0) {
+        status.textContent = '— none active —';
+        status.classList.remove('lit');
+      } else {
+        status.textContent = active.join('  ·  ') + ' active';
+        status.classList.add('lit');
+      }
+    }
+  </script>
+</body>
+</html>
