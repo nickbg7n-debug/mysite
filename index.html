@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Click Me Blue</title>
+  <title>Click Me</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,6 +14,9 @@
       --blue-idle: #1a1a2e;
       --blue-active: #2563eb;
       --blue-glow: #3b82f6;
+      --red-idle: #2e1a1a;
+      --red-active: #dc2626;
+      --red-glow: #f87171;
       --text: #e8e8e8;
       --muted: #555;
       --border: #2a2a2a;
@@ -148,6 +151,28 @@
       color: rgba(255,255,255,0.8);
     }
 
+    /* Red buttons */
+    .btn.red {
+      background: var(--red-idle);
+    }
+
+    .btn.red:hover {
+      border-color: #dc262655;
+    }
+
+    .btn.red.active {
+      background: var(--red-active);
+      border-color: var(--red-glow);
+      box-shadow:
+        0 0 0 1px var(--red-glow),
+        0 0 30px rgba(248,113,113,0.4),
+        0 0 60px rgba(220,38,38,0.2);
+    }
+
+    .btn.red::after {
+      background: radial-gradient(circle at center, rgba(248,113,113,0.15) 0%, transparent 70%);
+    }
+
     /* Ripple */
     .ripple {
       position: absolute;
@@ -181,8 +206,8 @@
 <body>
 
   <header>
-    <h1>Click Me Blue</h1>
-    <p>Toggle each button to activate</p>
+    <h1>Click Me</h1>
+    <p>Blue & Red — toggle each button</p>
   </header>
 
   <div class="button-row">
@@ -197,6 +222,14 @@
     <button class="btn" onclick="toggle(this, 3)">
       <span class="number">03</span>
       <span class="label">Gamma</span>
+    </button>
+    <button class="btn red" onclick="toggle(this, 4)">
+      <span class="number">04</span>
+      <span class="label">Delta</span>
+    </button>
+    <button class="btn red" onclick="toggle(this, 5)">
+      <span class="number">05</span>
+      <span class="label">Epsilon</span>
     </button>
   </div>
 
